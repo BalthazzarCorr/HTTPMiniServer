@@ -1,6 +1,7 @@
 ﻿namespace HTTPMiniServer.Server.Contracts
 {
-   internal interface IView
+   public interface IView
    {
+      string View();
    }
 }
