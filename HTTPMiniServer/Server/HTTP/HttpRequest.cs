@@ -46,8 +46,7 @@ namespace HTTPMiniServer.Server.HTTP
 
       private void ParseRequest(string requestText)
       {
-         var requestLines = requestText.Split(new[] { Environment.NewLine }
-            , StringSplitOptions.RemoveEmptyEntries);
+         var requestLines = requestText.Split( Environment.NewLine );
 
          if (!requestLines.Any())
          {
@@ -103,7 +102,12 @@ namespace HTTPMiniServer.Server.HTTP
          for (int i = 1; i < emptyLineAfterHeadersIndex; i++)
          {
             var currentLine = requestLines[i];
-            var headerParts = currentLine.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+            var headerParts = currentLine.Split(new[] { ": " }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (headerParts.Length!=2)
+            {
+               BadRequestException.ThrowFromInvalidRequest();
+            }
 
             var headerKey = headerParts[0];
             var headerValue = headerParts[1].Trim();
