@@ -19,6 +19,7 @@
          var availibleMethods = Enum.GetValues(typeof(HttpRequestMethod)).Cast<HttpRequestMethod>();
 
          foreach (var method in availibleMethods)
+
          {
             this.routes[method] = new Dictionary<string, IRoutingContext>();
          }

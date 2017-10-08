@@ -63,12 +63,14 @@
 
             var bytesAsStirng = Encoding.UTF8.GetString(data.Array, 0, nuberOfBytesRead);
 
+            result.Append(bytesAsStirng);
+
             if (nuberOfBytesRead < 1024)
             {
                break;
             }
 
-            result.Append(bytesAsStirng);
+           
 
          }
 
