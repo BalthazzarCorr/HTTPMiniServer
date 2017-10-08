@@ -1,12 +1,23 @@
-﻿using System;
-
+﻿using  System;
 namespace HTTPMiniServer
 {
-   public class Launcher
+   using Routing;
+   using Server;
+   using Server.Contracts;
+
+   public class Launcher : IRunnable
    {
+
       static void Main(string[] args)
       {
-         Console.WriteLine("Hello World!");
+         new Launcher().Run();
+      }
+
+      public void Run()
+      {
+         var appRouteConfing = new AppRouteConfig();
+         var webServer = new WebServer(1337, appRouteConfing);
+         webServer.Run();
       }
    }
 }

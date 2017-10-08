@@ -1,5 +1,4 @@
-﻿
-namespace HTTPMiniServer.Server.HTTP
+﻿namespace HTTPMiniServer.Server.HTTP
 {
    using Common;
    using Contracts;

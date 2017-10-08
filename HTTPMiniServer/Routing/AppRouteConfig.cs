@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-
+﻿
 namespace HTTPMiniServer.Routing
 {
+   using System;
    using System.Collections.Generic;
+   using System.Linq;
    using Contracts;
    using Server.Enums;
    using Server.Handlers;
@@ -41,7 +41,7 @@ namespace HTTPMiniServer.Routing
          }
          else
          {
-            throw  new InvalidOperationException("Invalid Hanler");
+            throw  new InvalidOperationException("Invalid Handler");
          }
       }
    }

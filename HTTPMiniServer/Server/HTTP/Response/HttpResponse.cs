@@ -1,13 +1,10 @@
-﻿
-using System.Text;
-using HTTPMiniServer.Server.Common;
-
-namespace HTTPMiniServer.Server.HTTP.Response
+﻿namespace HTTPMiniServer.Server.HTTP.Response
 {
-   using Enums;
+
+   using System.Text;
    using Contracts;
-   using Server.Contracts;
-   public abstract class HttpResponse
+   using Enums;
+   public abstract class HttpResponse :IHttpResponse
    {
 
       private string statusCodeMessage => this.StatusCode.ToString();
