@@ -6,7 +6,6 @@
    using System.Threading.Tasks;
    using Contracts;
    using Routing;
-   using Handlers;
    using Routing.Contracts;
 
 
@@ -25,10 +24,10 @@
       public WebServer(int port, IAppRoutConfig appRouteConfig)
       {
          this.port = port;
-         this.serverRoutingConfig = new ServerRouteConfig(appRouteConfig);
 
          this.listener = new TcpListener(IPAddress.Parse(localHostIpaAddres), port);
 
+         this.serverRoutingConfig = new ServerRouteConfig(appRouteConfig);
       }
 
       public void Run()
@@ -39,7 +38,7 @@
 
          Console.WriteLine($"Server running on {localHostIpaAddres}:{port}");
 
-         Task.Run(this.ListenLoop);
+         Task.Run(this.ListenLoop).Wait();
       }
 
       private async Task ListenLoop()
