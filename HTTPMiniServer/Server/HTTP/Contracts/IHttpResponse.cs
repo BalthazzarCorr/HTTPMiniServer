@@ -7,6 +7,6 @@ namespace HTTPMiniServer.Server.HTTP.Contracts
    {
       HttpStatusCode StatusCode{get;}
 
-       HttpHeaderCollection Headers { get; }
+      IHttpHeaderCollection Headers { get; }
    }
 }

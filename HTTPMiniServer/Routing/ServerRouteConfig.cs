@@ -1,25 +1,26 @@
 ﻿namespace HTTPMiniServer.Routing
 {
+   using Contracts;
+   using Server.Enums;
    using System;
    using System.Collections.Generic;
    using System.Linq;
    using System.Text;
    using System.Text.RegularExpressions;
-   using Contracts;
-   using Server.Enums;
 
-   public class ServerRouteConfig : IServerRoutingConfig
+   public class ServerRouteConfig : IServerRouteConfig
    {
       private readonly IDictionary<HttpRequestMethod, IDictionary<string, IRoutingContext>> routes;
 
-      public ServerRouteConfig(IAppRoutConfig appRouteConfig)
+      public ServerRouteConfig(IAppRouteConfig appRouteConfig)
       {
          this.routes = new Dictionary<HttpRequestMethod, IDictionary<string, IRoutingContext>>();
 
-         var availibleMethods = Enum.GetValues(typeof(HttpRequestMethod)).Cast<HttpRequestMethod>();
+         var availableMethods = Enum
+             .GetValues(typeof(HttpRequestMethod))
+             .Cast<HttpRequestMethod>();
 
-         foreach (var method in availibleMethods)
-
+         foreach (var method in availableMethods)
          {
             this.routes[method] = new Dictionary<string, IRoutingContext>();
          }
@@ -27,25 +28,23 @@
          this.InitializeRouteConfig(appRouteConfig);
       }
 
+      public IDictionary<HttpRequestMethod, IDictionary<string, IRoutingContext>> Routes => this.routes;
 
-      public IDictionary<HttpRequestMethod, IDictionary<string, IRoutingContext>> Routes { get; }
-
-      private void InitializeRouteConfig(IAppRoutConfig appRouteConfig)
+      private void InitializeRouteConfig(IAppRouteConfig appRouteConfig)
       {
-         foreach (var registerdRoute in appRouteConfig.Routes)
+         foreach (var registeredRoute in appRouteConfig.Routes)
          {
-            var requestMethod = registerdRoute.Key;
-            var routeWithHandlers = registerdRoute.Value;
+            var requestMethod = registeredRoute.Key;
+            var routesWithHandlers = registeredRoute.Value;
 
-            foreach (var routeWithHandler in routeWithHandlers)
+            foreach (var routeWithHandler in routesWithHandlers)
             {
-
                var route = routeWithHandler.Key;
                var handler = routeWithHandler.Value;
 
                var parameters = new List<string>();
 
-               var parsedRouteRegex = this.ParsedRoute(route, parameters);
+               var parsedRouteRegex = this.ParseRoute(route, parameters);
 
                var routingContext = new RoutingContext(handler, parameters);
 
@@ -54,32 +53,29 @@
          }
       }
 
-      private string ParsedRoute(string route, List<string> parameters)
+      private string ParseRoute(string route, List<string> parameters)
       {
-         var result = new StringBuilder();
-         result.Append("^");
-
          if (route == "/")
          {
-            result.Append("/$");
-            return result.ToString();
-
+            return "^/$";
          }
+
+         var result = new StringBuilder();
+
+         result.Append("^/");
 
          var tokens = route.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
          this.ParseTokens(tokens, parameters, result);
 
          return result.ToString();
-
       }
 
       private void ParseTokens(string[] tokens, List<string> parameters, StringBuilder result)
       {
          for (int i = 0; i < tokens.Length; i++)
          {
-            var end = tokens.Length - 1 == i ? "$" : "/";
-
+            var end = i == tokens.Length - 1 ? "$" : "/";
             var currentToken = tokens[i];
 
             if (!currentToken.StartsWith('{') && !currentToken.EndsWith('}'))
@@ -89,13 +85,11 @@
             }
 
             var parameterRegex = new Regex("<\\w+>");
-
             var parameterMatch = parameterRegex.Match(currentToken);
 
             if (!parameterMatch.Success)
             {
-               throw  new InvalidOperationException($"Route parameter in {currentToken} is not valid.");
-               continue;
+               throw new InvalidOperationException($"Route parameter in '{currentToken}' is not valid.");
             }
 
             var match = parameterMatch.Value;

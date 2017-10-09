@@ -1,4 +1,6 @@
 ﻿using  System;
+using HTTPMiniServer.Application;
+
 namespace HTTPMiniServer
 {
    using Routing;
@@ -15,7 +17,10 @@ namespace HTTPMiniServer
 
       public void Run()
       {
+         var mainApplication = new MainApplication();
          var appRouteConfing = new AppRouteConfig();
+         mainApplication.Configure(appRouteConfing);
+
          var webServer = new WebServer(1337, appRouteConfing);
          webServer.Run();
       }

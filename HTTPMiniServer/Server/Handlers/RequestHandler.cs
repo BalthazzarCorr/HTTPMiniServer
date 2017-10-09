@@ -1,16 +1,13 @@
-﻿
-
-using HTTPMiniServer.Server.HTTP;
-
-namespace HTTPMiniServer.Server.Handlers
+﻿namespace HTTPMiniServer.Server.Handlers
 {
    using System;
    using Common;
    using Contracts;
    using HTTP.Contracts;
+   using HTTP;
 
 
-   public abstract class RequestHandler : IRequestHandler
+   public  class RequestHandler : IRequestHandler
    {
       private readonly Func<IHttpRequest, IHttpResponse> handelingFunc;
 

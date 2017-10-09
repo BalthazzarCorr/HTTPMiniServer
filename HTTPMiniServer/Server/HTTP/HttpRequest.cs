@@ -1,5 +1,4 @@
-﻿
-namespace HTTPMiniServer.Server.HTTP
+﻿namespace HTTPMiniServer.Server.HTTP
 {
    using System;
    using System.Collections.Generic;
@@ -15,25 +14,39 @@ namespace HTTPMiniServer.Server.HTTP
    {
       private const string BAD_REQUEST_EXCEPTION_MESSAGE = "Request is not valid";
 
+      private readonly string requestText;
+
       public HttpRequest(string requestText)
       {
          CoreValidator.ThrowIfNullOrEmpty(requestText, nameof(requestText));
+
+         this.requestText = requestText;
+
          this.FromData = new Dictionary<string, string>();
          this.QueryParameters = new Dictionary<string, string>();
          this.UrlParameters = new Dictionary<string, string>();
          this.Headers = new HttpHeaderCollection();
+
 
          this.ParseRequest(requestText);
       }
 
 
       public IDictionary<string, string> FromData { get; set; }
-      public HttpHeaderCollection Headers { get; private set; }
+
+      public IHttpHeaderCollection Headers { get; private set; }
+
       public string Path { get; private set; }
+
       public IDictionary<string, string> QueryParameters { get; private set; }
+
       public HttpRequestMethod Method { get; private set; }
+
       public string Url { get; private set; }
+
       public IDictionary<string, string> UrlParameters { get; private set; }
+
+
 
       public void AddUrlParameter(string key, string value)
       {
@@ -46,7 +59,7 @@ namespace HTTPMiniServer.Server.HTTP
 
       private void ParseRequest(string requestText)
       {
-         var requestLines = requestText.Split( Environment.NewLine );
+         var requestLines = requestText.Split(Environment.NewLine);
 
          if (!requestLines.Any())
          {
@@ -61,10 +74,8 @@ namespace HTTPMiniServer.Server.HTTP
             throw new BadRequestException(BAD_REQUEST_EXCEPTION_MESSAGE);
          }
 
-         this.Method = this.ParseMethod(requestLine[0]);
-
-         this.Url = requestLines[1];
-
+         this.Method = this.ParseMethod(requestLine.First());
+         this.Url = requestLine[1];
          this.Path = this.ParsePath(this.Url);
 
          this.ParseHeaders(requestLines);
@@ -91,9 +102,7 @@ namespace HTTPMiniServer.Server.HTTP
       }
 
       private string ParsePath(string url)
-         => url.Split(new[] { '?', '#' }
-            , StringSplitOptions.RemoveEmptyEntries)[0];
-
+         => url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
       private void ParseHeaders(string[] requestLines)
       {
@@ -104,7 +113,7 @@ namespace HTTPMiniServer.Server.HTTP
             var currentLine = requestLines[i];
             var headerParts = currentLine.Split(new[] { ": " }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (headerParts.Length!=2)
+            if (headerParts.Length != 2)
             {
                BadRequestException.ThrowFromInvalidRequest();
             }
@@ -161,9 +170,9 @@ namespace HTTPMiniServer.Server.HTTP
 
       private void ParseFormData(string fromDataLine)
       {
-         if (this.Method == HttpRequestMethod.Get) 
+         if (this.Method == HttpRequestMethod.Get)
          {
-            return;;
+            return; ;
          }
 
          this.ParseQuery(fromDataLine, this.QueryParameters);
@@ -194,5 +203,7 @@ namespace HTTPMiniServer.Server.HTTP
             dict.Add(queryKey, queryValue);
          }
       }
+
+      public override string ToString() => this.requestText;
    }
 }

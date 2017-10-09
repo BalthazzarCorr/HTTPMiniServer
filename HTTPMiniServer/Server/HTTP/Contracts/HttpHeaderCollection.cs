@@ -1,26 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using HTTPMiniServer.Server.Common;
+﻿
 
 namespace HTTPMiniServer.Server.HTTP.Contracts
 {
-   using Contracts;
+
+   using System;
+   using System.Collections;
+   using System.Collections.Generic;
+   using System.Text;
+   using Common;
 
    public class HttpHeaderCollection : IHttpHeaderCollection
    {
-      private readonly IDictionary<string, HttpHeader> headers;
+      private readonly IDictionary<string, ICollection<HttpHeader>> headers;
 
       public HttpHeaderCollection()
 
       {
-         this.headers = new Dictionary<string, HttpHeader>();
+         this.headers = new Dictionary<string, ICollection<HttpHeader>>();
       }
 
       public void Add(HttpHeader header)
+
       {
          CoreValidator.ThrowIfNull(header, nameof(header));
 
-         headers[header.Key] = header;
+         var headerKey = header.Key;
+
+         if (!this.headers.ContainsKey(headerKey))
+         {
+            this.headers[headerKey] = new List<HttpHeader>();
+         }
+
+         this.headers[headerKey].Add(header);
       }
 
       public bool ContainsKey(string key)
@@ -30,7 +41,7 @@ namespace HTTPMiniServer.Server.HTTP.Contracts
          return this.headers.ContainsKey(key);
       }
 
-      public HttpHeader Get(string key)
+      public ICollection<HttpHeader> Get(string key)
       {
         CoreValidator.ThrowIfNull(key,nameof(key));
 
@@ -42,7 +53,30 @@ namespace HTTPMiniServer.Server.HTTP.Contracts
          return this.headers[key];
       }
 
+      public IEnumerator<ICollection<HttpHeader>> GetEnumerator()
+         => this.headers.Values.GetEnumerator();
+
+      IEnumerator IEnumerable.GetEnumerator()
+         => this.headers.Values.GetEnumerator();
+
+
       public override string ToString()
-         => string.Join(Environment.NewLine, this.headers);
+      {
+         var result = new StringBuilder();
+
+         foreach (var header in this.headers)
+         {
+            var headerKey = header.Key;
+
+            foreach (var headerValue in header.Value)
+            {
+               result.AppendLine($"{headerKey}: {headerValue.Value}");
+            }
+         }
+
+         return result.ToString();
+      }
+
+
    }
 }

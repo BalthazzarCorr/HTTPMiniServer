@@ -2,14 +2,14 @@
 {
 
    using System.Collections.Generic;
-   using HTTPMiniServer.Server.Enums;
+   using Enums;
 
 
    public interface IHttpRequest
    {
       IDictionary<string, string> FromData { get; set; }
 
-      HttpHeaderCollection Headers { get; }
+      IHttpHeaderCollection Headers { get; }
 
       string Path { get; }
 

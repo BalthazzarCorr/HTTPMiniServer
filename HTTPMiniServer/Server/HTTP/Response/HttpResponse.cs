@@ -15,7 +15,7 @@
       }
 
 
-      public HttpHeaderCollection Headers { get; }
+      public IHttpHeaderCollection Headers { get; }
       public HttpStatusCode StatusCode { get; protected set; }
 
 

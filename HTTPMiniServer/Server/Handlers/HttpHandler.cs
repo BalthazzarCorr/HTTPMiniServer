@@ -10,10 +10,12 @@
 
    public class HttpHandler : IRequestHandler
    {
-      private readonly IServerRoutingConfig serverRouteConfig;
-      public HttpHandler(IServerRoutingConfig routeConfig)
+      private readonly IServerRouteConfig serverRouteConfig;
+
+      public HttpHandler(IServerRouteConfig routeConfig)
       {
          CoreValidator.ThrowIfNull(routeConfig, nameof(routeConfig));
+
          this.serverRouteConfig = routeConfig;
       }
 
@@ -22,7 +24,9 @@
 
          var requestMethod = context.Request.Method;
          var requestPath = context.Request.Path;
+
          var registeredRoutes = this.serverRouteConfig.Routes[requestMethod];
+
 
          foreach (var registeredRoute in registeredRoutes)
          {
@@ -50,7 +54,7 @@
             return routingContext.Handler.Handle(context);
          }
 
-         return new NotFondResponse();
+            return new NotFondResponse();
       }
    }
 }

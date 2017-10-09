@@ -6,7 +6,7 @@
 
 
 
-   public interface IAppRoutConfig
+   public interface IAppRouteConfig
    {
       IReadOnlyDictionary<HttpRequestMethod, Dictionary<string, RequestHandler>> Routes { get; }
 

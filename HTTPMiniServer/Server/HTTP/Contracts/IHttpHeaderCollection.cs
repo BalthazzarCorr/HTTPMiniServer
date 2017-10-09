@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace HTTPMiniServer.Server.HTTP.Contracts
+﻿namespace HTTPMiniServer.Server.HTTP.Contracts
 {
-    interface IHttpHeaderCollection
-    {
-       void Add(HttpHeader header);
+   using System.Collections.Generic;
 
-       bool ContainsKey(string key);
+   public interface IHttpHeaderCollection : IEnumerable<ICollection<HttpHeader>>
+   {
+      void Add(HttpHeader header);
 
-       HttpHeader Get(string key);
-    }
+      bool ContainsKey(string key);
+
+      ICollection<HttpHeader> Get(string key);
+   }
 }

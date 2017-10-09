@@ -11,32 +11,30 @@
 
    public class WebServer : IRunnable
    {
-      private const string localHostIpaAddres = "127.0.0.1";
+      private const string localHostIpAddress = "127.0.0.1";
 
       private readonly int port;
 
-      private readonly IServerRoutingConfig serverRoutingConfig;
+      private readonly IServerRouteConfig serverRouteConfig;
 
       private readonly TcpListener listener;
 
       private bool isRunning;
 
-      public WebServer(int port, IAppRoutConfig appRouteConfig)
+      public WebServer(int port, IAppRouteConfig appRouteConfig)
       {
          this.port = port;
+         this.listener = new TcpListener(IPAddress.Parse(localHostIpAddress), port);
 
-         this.listener = new TcpListener(IPAddress.Parse(localHostIpaAddres), port);
-
-         this.serverRoutingConfig = new ServerRouteConfig(appRouteConfig);
+         this.serverRouteConfig = new ServerRouteConfig(appRouteConfig);
       }
 
       public void Run()
       {
          this.listener.Start();
-
          this.isRunning = true;
 
-         Console.WriteLine($"Server running on {localHostIpaAddres}:{port}");
+         Console.WriteLine($"Server running on {localHostIpAddress}:{this.port}");
 
          Task.Run(this.ListenLoop).Wait();
       }
@@ -46,10 +44,8 @@
          while (this.isRunning)
          {
             var client = await this.listener.AcceptSocketAsync();
-
-            var connectionHandler = new ConnectionHandler(client, this.serverRoutingConfig);
-
-            await connectionHandler.ProcessRequesAsync();
+            var connectionHandler = new ConnectionHandler(client, this.serverRouteConfig);
+            await connectionHandler.ProcessRequestAsync();
          }
       }
    }

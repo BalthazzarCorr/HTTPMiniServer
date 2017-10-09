@@ -8,7 +8,7 @@ namespace HTTPMiniServer.Routing
    using Server.Enums;
    using Server.Handlers;
 
-   public class AppRouteConfig : IAppRoutConfig
+   public class AppRouteConfig : IAppRouteConfig
    {
       private readonly Dictionary<HttpRequestMethod, Dictionary<string, RequestHandler>> routes;
 
