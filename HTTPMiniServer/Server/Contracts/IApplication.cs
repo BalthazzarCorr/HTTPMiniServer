@@ -4,7 +4,7 @@
 
    public interface IApplication
    {
-      void Configure(IAppRouteConfig appRoutConfig);
+      void Configure(IAppRouteConfig appRouteConfig);
 
 
    }

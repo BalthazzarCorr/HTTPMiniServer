@@ -34,6 +34,14 @@ namespace HTTPMiniServer.Server.HTTP.Contracts
          this.headers[headerKey].Add(header);
       }
 
+      public void Add(string key, string value)
+      {
+         CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
+         CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
+
+         this.Add(new HttpHeader(key, value));
+      }
+
       public bool ContainsKey(string key)
       {
          CoreValidator.ThrowIfNull(key,nameof(key));

@@ -5,7 +5,8 @@
 
    public class PostHandler : RequestHandler
    {
-      public PostHandler(Func<IHttpRequest, IHttpResponse> handelingFunc) : base(handelingFunc)
+      public PostHandler(Func<IHttpContext, IHttpResponse> handelingFunc) 
+         : base(handelingFunc)
       {
 
       }

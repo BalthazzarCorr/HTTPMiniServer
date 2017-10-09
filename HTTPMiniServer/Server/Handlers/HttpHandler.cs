@@ -19,11 +19,11 @@
          this.serverRouteConfig = routeConfig;
       }
 
-      public IHttpResponse Handle(IHttpContext context)
+      public IHttpResponse Handle(IHttpContext httpContext)
       {
 
-         var requestMethod = context.Request.Method;
-         var requestPath = context.Request.Path;
+         var requestMethod = httpContext.Request.Method;
+         var requestPath = httpContext.Request.Path;
 
          var registeredRoutes = this.serverRouteConfig.Routes[requestMethod];
 
@@ -48,10 +48,10 @@
             {
                var parameterValue = match.Groups[parameter].Value;
 
-               context.Request.AddUrlParameter(parameter, parameterValue);
+               httpContext.Request.AddUrlParameter(parameter, parameterValue);
             }
 
-            return routingContext.Handler.Handle(context);
+            return routingContext.Handler.Handle(httpContext);
          }
 
             return new NotFondResponse();

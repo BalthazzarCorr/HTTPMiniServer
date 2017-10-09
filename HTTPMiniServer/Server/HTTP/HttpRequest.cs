@@ -175,7 +175,7 @@
             return; ;
          }
 
-         this.ParseQuery(fromDataLine, this.QueryParameters);
+         this.ParseQuery(fromDataLine, this.FromData);
       }
 
       private void ParseQuery(string query, IDictionary<string, string> dict)

@@ -1,19 +1,25 @@
-﻿namespace HTTPMiniServer.Application
+﻿using HTTPMiniServer.Server.HTTP;
+
+namespace HTTPMiniServer.Application
 {
    using Controllers;
-   using Server.Handlers;
    using Routing.Contracts;
    using Server.Contracts;
+   using Server.Handlers;
 
    public class MainApplication : IApplication
    {
-      public void Configure(IAppRouteConfig appRoutConfig)
+      public void Configure(IAppRouteConfig appRouteConfig)
       {
-        appRoutConfig
+        appRouteConfig
             .AddRoute("/", new GetHandler(request=> new HomeController().Index()));
 
-         //appRoutConfig
-         //   .AddRoute("/about" , new GetHandler(requeset=>));
+         appRouteConfig
+            .AddRoute("/register", new PostHandler(
+               httpContext => new UserController()
+               .RegisterPost(httpContext.Request.FromData["name"])));
+
+         appRouteConfig.AddRoute("/register", new GetHandler(httpContext => new UserController().RegisterGet()));
       }
    }
 }

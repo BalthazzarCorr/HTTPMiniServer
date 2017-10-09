@@ -9,19 +9,22 @@
 
    public  class RequestHandler : IRequestHandler
    {
-      private readonly Func<IHttpRequest, IHttpResponse> handelingFunc;
+      private readonly Func<IHttpContext, IHttpResponse> func;
 
-      protected RequestHandler(Func<IHttpRequest, IHttpResponse> handelingFunc)
+      protected RequestHandler(Func<IHttpContext, IHttpResponse> func)
       {
-         CoreValidator.ThrowIfNull(handelingFunc, nameof(handelingFunc));
-
-         this.handelingFunc = handelingFunc;
+         this.func = func;
       }
 
-      public IHttpResponse Handle(IHttpContext context)
+      public IHttpResponse Handle(IHttpContext httpContext)
       {
-         var response = this.handelingFunc(context.Request);
-         response.Headers.Add(new HttpHeader("Content-Type","text/plain"));
+         var response = this.func(httpContext.Request);
+
+         if (!response.Headers.ContainsKey(HttpHeader.ContentType))
+         {
+            response.Headers.Add(HttpHeader.ContentType, "text/html");
+         }
+
 
          return response;
 

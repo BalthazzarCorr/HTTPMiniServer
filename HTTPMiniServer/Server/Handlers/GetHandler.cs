@@ -5,7 +5,7 @@
 
    public class GetHandler : RequestHandler
    {
-      public GetHandler(Func<IHttpRequest, IHttpResponse> handelingFunc) 
+      public GetHandler(Func<IHttpContext, IHttpResponse> handelingFunc) 
          : base(handelingFunc)
       {
 

@@ -1,10 +1,8 @@
 ﻿namespace HTTPMiniServer.Server.HTTP.Contracts
 {
-
    using System.Collections.Generic;
    using Enums;
-
-
+   
    public interface IHttpRequest
    {
       IDictionary<string, string> FromData { get; set; }
@@ -20,6 +18,7 @@
       string Url { get; }
 
       IDictionary<string, string> UrlParameters { get; }
+     
 
       void AddUrlParameter(string key, string value);
 
