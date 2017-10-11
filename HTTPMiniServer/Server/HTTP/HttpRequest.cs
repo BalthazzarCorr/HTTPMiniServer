@@ -22,7 +22,7 @@
 
          this.requestText = requestText;
 
-         this.FromData = new Dictionary<string, string>();
+         this.FormData = new Dictionary<string, string>();
          this.QueryParameters = new Dictionary<string, string>();
          this.UrlParameters = new Dictionary<string, string>();
          this.Headers = new HttpHeaderCollection();
@@ -32,7 +32,7 @@
       }
 
 
-      public IDictionary<string, string> FromData { get; set; }
+      public IDictionary<string, string> FormData { get; set; }
 
       public IHttpHeaderCollection Headers { get; private set; }
 
@@ -81,6 +81,7 @@
          this.ParseHeaders(requestLines);
 
          this.ParseParameters();
+
 
          this.ParseFormData(requestLines.Last());
       }
@@ -175,12 +176,12 @@
             return; ;
          }
 
-         this.ParseQuery(fromDataLine, this.FromData);
+         this.ParseQuery(fromDataLine, this.FormData);
       }
 
       private void ParseQuery(string query, IDictionary<string, string> dict)
       {
-         if (!query.Contains('?'))
+         if (!query.Contains('='))
          {
             return;
          }

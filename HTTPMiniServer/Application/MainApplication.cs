@@ -1,6 +1,4 @@
-﻿using HTTPMiniServer.Server.HTTP;
-
-namespace HTTPMiniServer.Application
+﻿namespace HTTPMiniServer.Application
 {
    using Controllers;
    using Routing.Contracts;
@@ -12,14 +10,30 @@ namespace HTTPMiniServer.Application
       public void Configure(IAppRouteConfig appRouteConfig)
       {
         appRouteConfig
-            .AddRoute("/", new GetHandler(request=> new HomeController().Index()));
+            .AddRoute(
+           "/", 
+           new GetHandler(request=> new HomeController().Index()));
 
          appRouteConfig
-            .AddRoute("/register", new PostHandler(
+            .AddRoute(
+            "/register", 
+            new PostHandler(
                httpContext => new UserController()
-               .RegisterPost(httpContext.Request.FromData["name"])));
+               .RegisterPost(httpContext.FormData["name"])));
 
-         appRouteConfig.AddRoute("/register", new GetHandler(httpContext => new UserController().RegisterGet()));
+         appRouteConfig
+            .AddRoute(
+            "/register", 
+            new GetHandler(
+               httpContext => new UserController()
+               .RegisterGet()));
+
+         appRouteConfig
+            .AddRoute(
+            "/user/{(?<name>[a-z]+)}", 
+            new GetHandler(httpContext => new UserController()
+            .Details(httpContext.UrlParameters["name"])));;
+
       }
    }
 }

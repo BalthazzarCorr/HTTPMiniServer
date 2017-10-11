@@ -5,7 +5,7 @@
    
    public interface IHttpRequest
    {
-      IDictionary<string, string> FromData { get; set; }
+      IDictionary<string, string> FormData { get; set; }
 
       IHttpHeaderCollection Headers { get; }
 

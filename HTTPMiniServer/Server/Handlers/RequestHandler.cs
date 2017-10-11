@@ -1,17 +1,16 @@
 ﻿namespace HTTPMiniServer.Server.Handlers
 {
    using System;
-   using Common;
    using Contracts;
-   using HTTP.Contracts;
    using HTTP;
+   using HTTP.Contracts;
 
 
    public  class RequestHandler : IRequestHandler
    {
-      private readonly Func<IHttpContext, IHttpResponse> func;
+      private readonly Func<IHttpRequest, IHttpResponse> func;
 
-      protected RequestHandler(Func<IHttpContext, IHttpResponse> func)
+      protected RequestHandler(Func<IHttpRequest, IHttpResponse> func)
       {
          this.func = func;
       }

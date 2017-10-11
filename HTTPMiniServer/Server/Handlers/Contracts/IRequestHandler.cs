@@ -4,6 +4,6 @@
 
    public interface IRequestHandler
    {
-      IHttpResponse Handle(IHttpContext httpContextt);
+      IHttpResponse Handle(IHttpContext httpContext);
    }
 }
