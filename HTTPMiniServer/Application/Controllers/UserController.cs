@@ -1,4 +1,6 @@
 ﻿using System;
+using HTTPMiniServer.Server;
+using HTTPMiniServer.Server.Exceptions;
 
 namespace HTTPMiniServer.Application.Controllers
 {
@@ -16,7 +18,8 @@ namespace HTTPMiniServer.Application.Controllers
 
        public IHttpResponse RegisterPost(string name)
        {
-        
+         var name = 
+          
          return new RedirectResponse($"/user/{name}");
        }
     }

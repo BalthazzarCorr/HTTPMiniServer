@@ -1,4 +1,6 @@
-﻿using HTTPMiniServer.Server.HTTP;
+﻿using System.Collections.Immutable;
+using System.Linq;
+using HTTPMiniServer.Server.HTTP;
 
 namespace HTTPMiniServer.Application
 {
@@ -16,8 +18,7 @@ namespace HTTPMiniServer.Application
 
          appRouteConfig
             .AddRoute("/register", new PostHandler(
-               httpContext => new UserController()
-               .RegisterPost(httpContext.Request.FromData["name"])));
+               httpContext => new UserController().RegisterPost(httpContext.FormData)));
 
          appRouteConfig.AddRoute("/register", new GetHandler(httpContext => new UserController().RegisterGet()));
       }
