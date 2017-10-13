@@ -1,13 +1,11 @@
-﻿
-
-namespace HTTPMiniServer.Server.HTTP.Contracts
+﻿namespace HTTPMiniServer.Server.HTTP
 {
-
    using System;
    using System.Collections;
    using System.Collections.Generic;
    using System.Text;
    using Common;
+   using Contracts;
 
    public class HttpHeaderCollection : IHttpHeaderCollection
    {
@@ -26,7 +24,8 @@ namespace HTTPMiniServer.Server.HTTP.Contracts
 
          var headerKey = header.Key;
 
-         if (!this.headers.ContainsKey(headerKey))
+
+         if (!this.headers.ContainsKey(headerKey) )
          {
             this.headers[headerKey] = new List<HttpHeader>();
          }
@@ -44,19 +43,19 @@ namespace HTTPMiniServer.Server.HTTP.Contracts
 
       public bool ContainsKey(string key)
       {
-         CoreValidator.ThrowIfNull(key,nameof(key));
+         CoreValidator.ThrowIfNull(key, nameof(key));
 
          return this.headers.ContainsKey(key);
       }
 
       public ICollection<HttpHeader> Get(string key)
       {
-        CoreValidator.ThrowIfNull(key,nameof(key));
+         CoreValidator.ThrowIfNull(key, nameof(key));
 
          if (!this.headers.ContainsKey(key))
          {
-            throw  new InvalidOperationException($"The given key {key} is not present in the headers collection.");
-            
+            throw new InvalidOperationException($"The given key {key} is not present in the headers collection.");
+
          }
          return this.headers[key];
       }

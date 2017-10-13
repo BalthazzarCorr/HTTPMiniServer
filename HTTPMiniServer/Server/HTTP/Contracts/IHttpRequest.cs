@@ -9,6 +9,8 @@
 
       IHttpHeaderCollection Headers { get; }
 
+      IHttpCookieCollection Cookies { get; }
+
       string Path { get; }
 
       IDictionary<string, string> QueryParameters { get; }

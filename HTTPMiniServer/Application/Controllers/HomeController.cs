@@ -1,15 +1,20 @@
 ﻿namespace HTTPMiniServer.Application.Controllers
 {
-   using Views.Home;
    using Server.Enums;
+   using Server.HTTP;
    using Server.HTTP.Contracts;
    using Server.HTTP.Response;
+   using Views.Home;
 
    public class HomeController
     {
        public IHttpResponse Index()
        { 
-         return  new ViewResponse(HttpStatusCode.Ok,new IndexView());
+         var response = new ViewResponse(HttpStatusCode.Ok, new IndexView());
+         
+         response.Cookies.Add(new HttpCookie("lang", "en"));
+
+         return  response ;
        }
     }
 }

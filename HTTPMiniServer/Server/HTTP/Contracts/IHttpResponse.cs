@@ -8,5 +8,8 @@ namespace HTTPMiniServer.Server.HTTP.Contracts
       HttpStatusCode StatusCode{get;}
 
       IHttpHeaderCollection Headers { get; }
+
+      IHttpCookieCollection Cookies { get; }
+
    }
 }

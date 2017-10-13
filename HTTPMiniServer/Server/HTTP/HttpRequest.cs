@@ -2,13 +2,12 @@
 {
    using System;
    using System.Collections.Generic;
-   using Enums;
    using System.Linq;
    using System.Net;
    using Common;
-   using Exceptions;
-
    using Contracts;
+   using Enums;
+   using Exceptions;
 
    public class HttpRequest : IHttpRequest
    {
@@ -26,7 +25,7 @@
          this.QueryParameters = new Dictionary<string, string>();
          this.UrlParameters = new Dictionary<string, string>();
          this.Headers = new HttpHeaderCollection();
-
+         this.Cookies = new HttpCookieCollection();
 
          this.ParseRequest(requestText);
       }
@@ -35,6 +34,8 @@
       public IDictionary<string, string> FormData { get; set; }
 
       public IHttpHeaderCollection Headers { get; private set; }
+
+      public IHttpCookieCollection Cookies { get; private set; }
 
       public string Path { get; private set; }
 
@@ -45,7 +46,6 @@
       public string Url { get; private set; }
 
       public IDictionary<string, string> UrlParameters { get; private set; }
-
 
 
       public void AddUrlParameter(string key, string value)
@@ -79,10 +79,8 @@
          this.Path = this.ParsePath(this.Url);
 
          this.ParseHeaders(requestLines);
-
+         this.ParseCookies();
          this.ParseParameters();
-
-
          this.ParseFormData(requestLines.Last());
       }
 
@@ -131,6 +129,39 @@
          }
       }
 
+
+      private void ParseCookies()
+      {
+         if (this.Headers.ContainsKey(HttpHeader.Cookie))
+         {
+            var allCookies = this.Headers.Get(HttpHeader.Cookie);
+
+            foreach (var cookie in allCookies)
+            {
+               var cookieParts = cookie
+                  .Value
+                  .Split(new[] { ';' }, StringSplitOptions
+                  .RemoveEmptyEntries)
+                  .FirstOrDefault();
+
+               if (cookieParts == null || !cookieParts.Contains('='))
+               {
+                  continue;
+
+               }
+
+               var cookieKeyValuePair = cookieParts.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+               if (cookieKeyValuePair.Length == 2)
+               {
+                  var key = cookieKeyValuePair[0];
+
+                  var value = cookieKeyValuePair[1];
+
+                  this.Cookies.Add(new HttpCookie(key, value, false));
+               }
+            }
+         }
+      }
 
       private void ParseParameters()
       {

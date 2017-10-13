@@ -27,6 +27,10 @@ namespace HTTPMiniServer.Server.Handlers
             response.Headers.Add(HttpHeader.ContentType, "text/html");
          }
 
+         foreach (var cookie in response.Cookies)
+         {
+            response.Headers.Add(HttpHeader.SetCookie, cookie.ToString());
+         }
 
          return response;
 
