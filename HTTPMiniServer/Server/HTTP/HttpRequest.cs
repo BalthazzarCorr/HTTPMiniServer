@@ -82,6 +82,7 @@
 
          this.ParseParameters();
 
+
          this.ParseFormData(requestLines.Last());
       }
 
@@ -124,7 +125,7 @@
             this.Headers.Add(header);
          }
 
-         if (!this.Headers.ContainsKey("Host"))
+         if (!this.Headers.ContainsKey(HttpHeader.Host))
          {
             throw new BadRequestException(BAD_REQUEST_EXCEPTION_MESSAGE);
          }
@@ -180,7 +181,7 @@
 
       private void ParseQuery(string query, IDictionary<string, string> dict)
       {
-         if (!query.Contains('?'))
+         if (!query.Contains('='))
          {
             return;
          }

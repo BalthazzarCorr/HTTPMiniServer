@@ -1,6 +1,8 @@
 ﻿namespace HTTPMiniServer.Routing.Contracts
 {
+   using System;
    using System.Collections.Generic;
+   using Server.HTTP.Contracts;
    using Server.Enums;
    using Server.Handlers;
 
@@ -10,6 +12,9 @@
    {
       IReadOnlyDictionary<HttpRequestMethod, Dictionary<string, RequestHandler>> Routes { get; }
 
-      void AddRoute(string route, RequestHandler httpHandler);
+      void Get(string route, Func<IHttpRequest, IHttpResponse> handler);
+
+      void Post(string route, Func<IHttpRequest, IHttpResponse> handler);
+      void AddRoute(string route, HttpRequestMethod method,RequestHandler httpHandler);
    }
 }

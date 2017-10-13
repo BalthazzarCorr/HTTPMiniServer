@@ -1,26 +1,36 @@
-﻿using System.Collections.Immutable;
-using System.Linq;
-using HTTPMiniServer.Server.HTTP;
-
-namespace HTTPMiniServer.Application
+﻿namespace HTTPMiniServer.Application
 {
    using Controllers;
    using Routing.Contracts;
    using Server.Contracts;
-   using Server.Handlers;
 
    public class MainApplication : IApplication
    {
       public void Configure(IAppRouteConfig appRouteConfig)
       {
-        appRouteConfig
-            .AddRoute("/", new GetHandler(request=> new HomeController().Index()));
+
+     
+        appRouteConfig.Get(
+           "/", 
+           request=> new HomeController().Index());
+
+         appRouteConfig.Post(
+            "/register", 
+               httpContext => new UserController()
+               .RegisterPost(httpContext.FormData["name"]));
 
          appRouteConfig
-            .AddRoute("/register", new PostHandler(
-               httpContext => new UserController().RegisterPost(httpContext.FormData)));
+           .Get(
+            "/register", 
+              httpContext => new UserController()
+               .RegisterGet());
 
-         appRouteConfig.AddRoute("/register", new GetHandler(httpContext => new UserController().RegisterGet()));
+         appRouteConfig
+            .Get(
+            "/user/{(?<name>[a-z]+)}", 
+            httpContext => new UserController()
+            .Details(httpContext.UrlParameters["name"]));
+
       }
    }
 }

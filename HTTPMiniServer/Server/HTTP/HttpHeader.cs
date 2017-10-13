@@ -1,5 +1,4 @@
-﻿using System;
-using HTTPMiniServer.Server.Common;
+﻿using HTTPMiniServer.Server.Common;
 
 namespace HTTPMiniServer.Server.HTTP
 {

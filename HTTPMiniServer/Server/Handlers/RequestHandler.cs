@@ -1,32 +1,31 @@
-﻿namespace HTTPMiniServer.Server.Handlers
+﻿using HTTPMiniServer.Server.Common;
+
+namespace HTTPMiniServer.Server.Handlers
 {
    using System;
-   using Common;
    using Contracts;
-   using HTTP.Contracts;
    using HTTP;
+   using HTTP.Contracts;
 
 
    public  class RequestHandler : IRequestHandler
    {
-      private readonly Func<IHttpRequest, IHttpResponse> handlingFunc;
+      private readonly Func<IHttpRequest, IHttpResponse> func;
 
-      public RequestHandler(Func<IHttpRequest, IHttpResponse> handlingFunc)
+      public RequestHandler(Func<IHttpRequest, IHttpResponse> func)
       {
-         CoreValidator.ThrowIfNull(handlingFunc, nameof(handlingFunc));
-
-         this.handlingFunc = handlingFunc;
+         CoreValidator.ThrowIfNull(func,nameof(func));
+         this.func = func;
       }
+
       public IHttpResponse Handle(IHttpContext httpContext)
       {
-         var response = this.handlingFunc(httpContext.Request);
+         var response = this.func(httpContext.Request);
 
          if (!response.Headers.ContainsKey(HttpHeader.ContentType))
          {
             response.Headers.Add(HttpHeader.ContentType, "text/html");
          }
-
-        
 
 
          return response;
