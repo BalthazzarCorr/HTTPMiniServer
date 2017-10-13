@@ -1,4 +1,6 @@
-﻿namespace HTTPMiniServer.Server.Handlers
+﻿using HTTPMiniServer.Server.Common;
+
+namespace HTTPMiniServer.Server.Handlers
 {
    using System;
    using Contracts;
@@ -10,8 +12,9 @@
    {
       private readonly Func<IHttpRequest, IHttpResponse> func;
 
-      protected RequestHandler(Func<IHttpRequest, IHttpResponse> func)
+      public RequestHandler(Func<IHttpRequest, IHttpResponse> func)
       {
+         CoreValidator.ThrowIfNull(func,nameof(func));
          this.func = func;
       }
 

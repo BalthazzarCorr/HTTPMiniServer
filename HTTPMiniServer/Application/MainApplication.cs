@@ -3,36 +3,33 @@
    using Controllers;
    using Routing.Contracts;
    using Server.Contracts;
-   using Server.Handlers;
 
    public class MainApplication : IApplication
    {
       public void Configure(IAppRouteConfig appRouteConfig)
       {
-        appRouteConfig
-            .AddRoute(
+
+     
+        appRouteConfig.Get(
            "/", 
-           new GetHandler(request=> new HomeController().Index()));
+           request=> new HomeController().Index());
 
-         appRouteConfig
-            .AddRoute(
+         appRouteConfig.Post(
             "/register", 
-            new PostHandler(
                httpContext => new UserController()
-               .RegisterPost(httpContext.FormData["name"])));
+               .RegisterPost(httpContext.FormData["name"]));
 
          appRouteConfig
-            .AddRoute(
+           .Get(
             "/register", 
-            new GetHandler(
-               httpContext => new UserController()
-               .RegisterGet()));
+              httpContext => new UserController()
+               .RegisterGet());
 
          appRouteConfig
-            .AddRoute(
+            .Get(
             "/user/{(?<name>[a-z]+)}", 
-            new GetHandler(httpContext => new UserController()
-            .Details(httpContext.UrlParameters["name"])));;
+            httpContext => new UserController()
+            .Details(httpContext.UrlParameters["name"]));
 
       }
    }

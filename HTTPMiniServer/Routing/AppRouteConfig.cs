@@ -1,10 +1,10 @@
-﻿
-namespace HTTPMiniServer.Routing
+﻿namespace HTTPMiniServer.Routing
 {
    using System;
    using System.Collections.Generic;
    using System.Linq;
    using Contracts;
+   using Server.HTTP.Contracts;
    using Server.Enums;
    using Server.Handlers;
 
@@ -15,6 +15,7 @@ namespace HTTPMiniServer.Routing
       public AppRouteConfig()
       {
          this.routes = new Dictionary<HttpRequestMethod, Dictionary<string, RequestHandler>>();
+
          var availableMthods = Enum
             .GetValues(typeof(HttpRequestMethod))
             .Cast<HttpRequestMethod>();
@@ -27,22 +28,19 @@ namespace HTTPMiniServer.Routing
 
       public IReadOnlyDictionary<HttpRequestMethod, Dictionary<string, RequestHandler>> Routes => this.routes;
 
-      public void AddRoute(string route, RequestHandler handler)
+      public void Get(string route, Func<IHttpRequest, IHttpResponse> handler)
       {
-         var handlerName = handler.GetType().Name.ToLower();
+         this.AddRoute(route,HttpRequestMethod.Get,new RequestHandler(handler));
+      }
 
-         if (handlerName.Contains("get"))
-         {
-            this.routes[HttpRequestMethod.Get].Add(route,handler);
-         }
-         else if (handlerName.Contains("post"))
-         {
-            this.routes[HttpRequestMethod.Post].Add(route, handler);
-         }
-         else
-         {
-            throw  new InvalidOperationException("Invalid Handler");
-         }
+      public void Post(string route, Func<IHttpRequest, IHttpResponse> handler)
+      {
+         this.AddRoute(route, HttpRequestMethod.Post, new RequestHandler(handler));
+      }
+
+      public void AddRoute(string route, HttpRequestMethod method, RequestHandler handler)
+      {
+         this.routes[method].Add(route,handler);
       }
    }
 }
