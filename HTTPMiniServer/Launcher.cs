@@ -1,12 +1,9 @@
-﻿using  System;
-using HTTPMiniServer.Application;
-
-namespace HTTPMiniServer
+﻿namespace HTTPMiniServer
 {
    using Routing;
    using Server;
    using Server.Contracts;
-
+   using ByTheCakeApplication;
    public class Launcher : IRunnable
    {
 
@@ -17,7 +14,10 @@ namespace HTTPMiniServer
 
       public void Run()
       {
-         var mainApplication = new MainApplication();
+
+        // var mainApplication = new MainApplication();
+
+         var mainApplication = new ByTheCakeApp();
          var appRouteConfing = new AppRouteConfig();
          mainApplication.Configure(appRouteConfing);
 
