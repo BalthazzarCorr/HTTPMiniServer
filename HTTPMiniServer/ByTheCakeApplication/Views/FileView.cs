@@ -3,11 +3,11 @@
 
    using Server.Contracts;
 
-   public class IndexView :IView
+   public class FileView :IView
    {
       private readonly string htmlFile;
 
-      public IndexView(string htmlFile)
+      public FileView(string htmlFile)
       {
          this.htmlFile = htmlFile;
       }

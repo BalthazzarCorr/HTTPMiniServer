@@ -12,6 +12,9 @@
       {
          appRouteConfig
             .Get("/", req => new HomeController().Index());
+
+         appRouteConfig
+            .Get("/about" , req => new HomeController().About());
       }
    }
 }

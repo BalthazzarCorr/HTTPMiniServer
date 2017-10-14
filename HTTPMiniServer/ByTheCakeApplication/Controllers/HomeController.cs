@@ -1,15 +1,16 @@
 ﻿namespace HTTPMiniServer.ByTheCakeApplication.Controllers
 {
-   using Server.Enums;
-   using Server.HTTP.Contracts;
-   using Server.HTTP.Response;
-   using Views.Home;
 
-   public class HomeController
+   using Infrastructure;
+   using Server.HTTP.Contracts;
+
+   public class HomeController : Controller
+
    {
-      public IHttpResponse Index()
-      {
-         return new ViewResponse(HttpStatusCode.Ok,new IndexView("Test"));
-      }
+      public IHttpResponse Index() =>   this.FileViewResponse("index");
+
+
+      public IHttpResponse About() => this.FileViewResponse("about");
+
    }
 }
