@@ -11,9 +11,9 @@
       {
          this.htmlFile = htmlFile;
       }
-      public string View()
-      {
-         throw new System.NotImplementedException();
-      }
+
+      public string View() => this.htmlFile;
+
+
    }
 }
