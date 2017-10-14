@@ -14,6 +14,10 @@
            "/", 
            request=> new HomeController().Index());
 
+         appRouteConfig.Get(
+            "/testsession",
+            httpContext => new HomeController().SessionTest(httpContext));
+
          appRouteConfig.Post(
             "/register", 
                httpContext => new UserController()

@@ -1,30 +1,56 @@
-﻿namespace HTTPMiniServer.Server.HTTP
-{
-   using Contracts;
+﻿using System;
 
-   public class HttpSession: IHttpSesion 
+namespace HTTPMiniServer.Server.HTTP
+{
+   using System.Collections.Generic;
+   using Common;
+   using Contracts;
+   public class HttpSession : IHttpSession
    {
-      public string Id { get; private set; }
+      private readonly IDictionary<string, object> values;
+
+     
 
 
       public HttpSession(string id)
       {
+         CoreValidator.ThrowIfNullOrEmpty(id, nameof(id));
          this.Id = id;
+         this.values = new Dictionary<string, object>();
       }
 
-      public object Get(string key)
-      {
-         throw new System.NotImplementedException();
-      }
+      public string Id { get; private set; }
+
 
       public void Add(string key, object value)
       {
-         throw new System.NotImplementedException();
+         CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
+         CoreValidator.ThrowIfNull(value, nameof(value));
+
+         this.values[key] = value;
       }
 
-      public void Clear()
+
+      public void Clear() => this.values.Clear();
+
+      public object Get(string key)
       {
-         throw new System.NotImplementedException();
+         CoreValidator.ThrowIfNull(key, nameof(key));
+
+         if (!this.values.ContainsKey(key))
+         {
+            return null;
+         }
+
+         return this.values[key];
       }
+
+
+      public T Get<T>(string key)
+         => (T) this.Get(key);
+
+      public bool Contains(string key) => this.values.ContainsKey(key);
+
    }
 }
+

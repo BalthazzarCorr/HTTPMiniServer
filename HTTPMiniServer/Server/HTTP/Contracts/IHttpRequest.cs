@@ -5,7 +5,8 @@
    
    public interface IHttpRequest
    {
-      IDictionary<string, string> FormData { get; set; }
+
+      IDictionary<string, string> FormData { get; }
 
       IHttpHeaderCollection Headers { get; }
 
@@ -13,17 +14,15 @@
 
       string Path { get; }
 
-      IDictionary<string, string> QueryParameters { get; }
-
       HttpRequestMethod Method { get; }
 
       string Url { get; }
 
       IDictionary<string, string> UrlParameters { get; }
-     
+
+      IHttpSession Session { get; set; }
 
       void AddUrlParameter(string key, string value);
-
 
    }
 }

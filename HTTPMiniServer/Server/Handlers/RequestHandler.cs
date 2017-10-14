@@ -1,30 +1,49 @@
-﻿using HTTPMiniServer.Server.Common;
-
-namespace HTTPMiniServer.Server.Handlers
+﻿namespace HTTPMiniServer.Server.Handlers
 {
+
    using System;
+   using Common;
    using Contracts;
    using HTTP;
    using HTTP.Contracts;
 
 
-   public  class RequestHandler : IRequestHandler
+   public class RequestHandler : IRequestHandler
    {
-      private readonly Func<IHttpRequest, IHttpResponse> func;
+      private readonly Func<IHttpRequest, IHttpResponse> handlingFunc;
 
-      public RequestHandler(Func<IHttpRequest, IHttpResponse> func)
+      public RequestHandler(Func<IHttpRequest, IHttpResponse> handlingFunc)
       {
-         CoreValidator.ThrowIfNull(func,nameof(func));
-         this.func = func;
+         CoreValidator.ThrowIfNull(handlingFunc, nameof(handlingFunc));
+
+         this.handlingFunc = handlingFunc;
       }
 
-      public IHttpResponse Handle(IHttpContext httpContext)
+      public IHttpResponse Handle(IHttpContext context)
       {
-         var response = this.func(httpContext.Request);
+         string sessionIdToSend = null;
+
+         if (!context.Request.Cookies.ContainsKey(SessionStore.SessionCookieKey))
+         {
+            var sessionId = Guid.NewGuid().ToString();
+
+            context.Request.Session = SessionStore.Get(sessionId);
+
+            sessionIdToSend = sessionId;
+         }
+
+         var response = this.handlingFunc(context.Request);
+
+         if (sessionIdToSend != null)
+         {
+            response.Headers.Add(
+               HttpHeader.SetCookie,
+               $"{SessionStore.SessionCookieKey}={sessionIdToSend}; HttpOnly; path=/");
+         }
 
          if (!response.Headers.ContainsKey(HttpHeader.ContentType))
          {
-            response.Headers.Add(HttpHeader.ContentType, "text/html");
+            response.Headers.Add(HttpHeader.ContentType, "text/plain");
          }
 
          foreach (var cookie in response.Cookies)
@@ -33,8 +52,6 @@ namespace HTTPMiniServer.Server.Handlers
          }
 
          return response;
-
       }
-
    }
 }

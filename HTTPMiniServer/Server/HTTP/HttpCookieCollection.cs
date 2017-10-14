@@ -1,5 +1,4 @@
-﻿
-namespace HTTPMiniServer.Server.HTTP
+﻿namespace HTTPMiniServer.Server.HTTP
 {
    using System;
    using System.Collections;
@@ -10,7 +9,6 @@ namespace HTTPMiniServer.Server.HTTP
 
    public class HttpCookieCollection : IHttpCookieCollection
    {
-
       private readonly IDictionary<string, HttpCookie> cookies;
 
       public HttpCookieCollection()
@@ -30,7 +28,7 @@ namespace HTTPMiniServer.Server.HTTP
          CoreValidator.ThrowIfNullOrEmpty(key, nameof(key));
          CoreValidator.ThrowIfNullOrEmpty(value, nameof(value));
 
-         this.Add(new HttpCookie(key,value));
+         this.Add(new HttpCookie(key, value));
       }
 
       public bool ContainsKey(string key)
@@ -40,22 +38,22 @@ namespace HTTPMiniServer.Server.HTTP
          return this.cookies.ContainsKey(key);
       }
 
+      public IEnumerator<HttpCookie> GetEnumerator()
+         => this.cookies.Values.GetEnumerator();
+
+      IEnumerator IEnumerable.GetEnumerator()
+         => this.cookies.Values.GetEnumerator();
+
       public HttpCookie Get(string key)
       {
          CoreValidator.ThrowIfNull(key, nameof(key));
 
          if (!this.cookies.ContainsKey(key))
          {
-            throw new InvalidOperationException($"The given key {key} is not present in the headers collection.");
-
+            throw new InvalidOperationException($"The given key {key} is not present in the cookies collection.");
          }
+
          return this.cookies[key];
       }
-
-      public IEnumerator<HttpCookie> GetEnumerator()
-         => this.cookies.Values.GetEnumerator();
-
-      IEnumerator IEnumerable.GetEnumerator()
-         => this.cookies.Values.GetEnumerator();
    }
 }

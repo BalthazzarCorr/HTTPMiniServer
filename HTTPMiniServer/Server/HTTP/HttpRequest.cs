@@ -1,18 +1,16 @@
 ﻿namespace HTTPMiniServer.Server.HTTP
 {
-   using System;
-   using System.Collections.Generic;
-   using System.Linq;
-   using System.Net;
    using Common;
    using Contracts;
    using Enums;
    using Exceptions;
+   using System;
+   using System.Collections.Generic;
+   using System.Linq;
+   using System.Net;
 
    public class HttpRequest : IHttpRequest
    {
-      private const string BAD_REQUEST_EXCEPTION_MESSAGE = "Request is not valid";
-
       private readonly string requestText;
 
       public HttpRequest(string requestText)
@@ -22,7 +20,6 @@
          this.requestText = requestText;
 
          this.FormData = new Dictionary<string, string>();
-         this.QueryParameters = new Dictionary<string, string>();
          this.UrlParameters = new Dictionary<string, string>();
          this.Headers = new HttpHeaderCollection();
          this.Cookies = new HttpCookieCollection();
@@ -30,8 +27,7 @@
          this.ParseRequest(requestText);
       }
 
-
-      public IDictionary<string, string> FormData { get; set; }
+      public IDictionary<string, string> FormData { get; private set; }
 
       public IHttpHeaderCollection Headers { get; private set; }
 
@@ -39,14 +35,13 @@
 
       public string Path { get; private set; }
 
-      public IDictionary<string, string> QueryParameters { get; private set; }
-
       public HttpRequestMethod Method { get; private set; }
 
       public string Url { get; private set; }
 
       public IDictionary<string, string> UrlParameters { get; private set; }
 
+      public IHttpSession Session { get; set; }
 
       public void AddUrlParameter(string key, string value)
       {
@@ -56,7 +51,6 @@
          this.UrlParameters[key] = value;
       }
 
-
       private void ParseRequest(string requestText)
       {
          var requestLines = requestText.Split(Environment.NewLine);
@@ -65,13 +59,14 @@
          {
             BadRequestException.ThrowFromInvalidRequest();
          }
-         var requestLine = requestLines.First().Split(new[] { ' ' },
-            StringSplitOptions.RemoveEmptyEntries);
 
-         if (requestLine.Length != 3
-             || requestLine[2].ToLower() != "http/1.1")
+         var requestLine = requestLines.First().Split(
+             new[] { ' ' },
+             StringSplitOptions.RemoveEmptyEntries);
+
+         if (requestLine.Length != 3 || requestLine[2].ToLower() != "http/1.1")
          {
-            throw new BadRequestException(BAD_REQUEST_EXCEPTION_MESSAGE);
+            BadRequestException.ThrowFromInvalidRequest();
          }
 
          this.Method = this.ParseMethod(requestLine.First());
@@ -82,26 +77,23 @@
          this.ParseCookies();
          this.ParseParameters();
          this.ParseFormData(requestLines.Last());
+
+         this.SetSession();
       }
-
-
 
       private HttpRequestMethod ParseMethod(string method)
       {
-
          HttpRequestMethod parsedMethod;
-
          if (!Enum.TryParse(method, true, out parsedMethod))
          {
             BadRequestException.ThrowFromInvalidRequest();
          }
 
          return parsedMethod;
-
       }
 
       private string ParsePath(string url)
-         => url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
+          => url.Split(new[] { '?', '#' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
       private void ParseHeaders(string[] requestLines)
       {
@@ -119,16 +111,17 @@
 
             var headerKey = headerParts[0];
             var headerValue = headerParts[1].Trim();
+
             var header = new HttpHeader(headerKey, headerValue);
+
             this.Headers.Add(header);
          }
 
          if (!this.Headers.ContainsKey(HttpHeader.Host))
          {
-            throw new BadRequestException(BAD_REQUEST_EXCEPTION_MESSAGE);
+            BadRequestException.ThrowFromInvalidRequest();
          }
       }
-
 
       private void ParseCookies()
       {
@@ -138,26 +131,33 @@
 
             foreach (var cookie in allCookies)
             {
-               var cookieParts = cookie
-                  .Value
-                  .Split(new[] { ';' }, StringSplitOptions
-                  .RemoveEmptyEntries)
-                  .FirstOrDefault();
-
-               if (cookieParts == null || !cookieParts.Contains('='))
+               if (!cookie.Value.Contains('='))
                {
-                  continue;
-
+                  return;
                }
 
-               var cookieKeyValuePair = cookieParts.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-               if (cookieKeyValuePair.Length == 2)
+               var cookieParts = cookie
+                   .Value
+                   .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                   .ToList();
+
+               if (!cookieParts.Any())
                {
-                  var key = cookieKeyValuePair[0];
+                  continue;
+               }
 
-                  var value = cookieKeyValuePair[1];
+               foreach (var cookiePart in cookieParts)
+               {
+                  var cookieKeyValuePair = cookiePart
+                      .Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
 
-                  this.Cookies.Add(new HttpCookie(key, value, false));
+                  if (cookieKeyValuePair.Length == 2)
+                  {
+                     var key = cookieKeyValuePair[0].Trim();
+                     var value = cookieKeyValuePair[1].Trim();
+
+                     this.Cookies.Add(new HttpCookie(key, value, false));
+                  }
                }
             }
          }
@@ -171,43 +171,20 @@
          }
 
          var query = this.Url
-            .Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries)
-            .Last();
-
+             .Split(new[] { '?' }, StringSplitOptions.RemoveEmptyEntries)
+             .Last();
 
          this.ParseQuery(query, this.UrlParameters);
+      }
 
-         if (!query.Contains('='))
+      private void ParseFormData(string formDataLine)
+      {
+         if (this.Method == HttpRequestMethod.Get)
          {
             return;
          }
 
-         var queryParis = query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-
-         foreach (var quertPair in queryParis)
-         {
-            var queryKvp = quertPair.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (queryKvp.Length != 2)
-            {
-               return;
-            }
-
-            var queryKey = WebUtility.UrlDecode(queryKvp[0]);
-            var queryValue = WebUtility.UrlDecode(queryKvp[1]);
-
-            this.AddUrlParameter(queryKey, queryValue);
-         }
-      }
-
-      private void ParseFormData(string fromDataLine)
-      {
-         if (this.Method == HttpRequestMethod.Get)
-         {
-            return; ;
-         }
-
-         this.ParseQuery(fromDataLine, this.FormData);
+         this.ParseQuery(formDataLine, this.FormData);
       }
 
       private void ParseQuery(string query, IDictionary<string, string> dict)
@@ -217,12 +194,11 @@
             return;
          }
 
+         var queryPairs = query.Split(new[] { '&' });
 
-         var queryParis = query.Split(new[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-
-         foreach (var quertPair in queryParis)
+         foreach (var queryPair in queryPairs)
          {
-            var queryKvp = quertPair.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+            var queryKvp = queryPair.Split(new[] { '=' });
 
             if (queryKvp.Length != 2)
             {
@@ -233,6 +209,17 @@
             var queryValue = WebUtility.UrlDecode(queryKvp[1]);
 
             dict.Add(queryKey, queryValue);
+         }
+      }
+
+      private void SetSession()
+      {
+         if (this.Cookies.ContainsKey(SessionStore.SessionCookieKey))
+         {
+            var cookie = this.Cookies.Get(SessionStore.SessionCookieKey);
+            var sessionId = cookie.Value;
+
+            this.Session = SessionStore.Get(sessionId);
          }
       }
 
