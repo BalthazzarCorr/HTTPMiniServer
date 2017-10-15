@@ -7,10 +7,10 @@
    public class HomeController : Controller
 
    {
-      public IHttpResponse Index() =>   this.FileViewResponse("index");
+      public IHttpResponse Index() =>   this.FileViewResponse(@"home\index");
 
 
-      public IHttpResponse About() => this.FileViewResponse("about");
+      public IHttpResponse About() => this.FileViewResponse(@"home\about");
 
    }
 }

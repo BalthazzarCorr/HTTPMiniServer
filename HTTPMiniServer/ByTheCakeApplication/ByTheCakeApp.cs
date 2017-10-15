@@ -1,8 +1,8 @@
 ﻿namespace HTTPMiniServer.ByTheCakeApplication
 {
-   using HTTPMiniServer.ByTheCakeApplication.Controllers;
-   using HTTPMiniServer.Routing.Contracts;
-   using HTTPMiniServer.Server.Contracts;
+   using Controllers;
+   using Routing.Contracts;
+   using Server.Contracts;
 
 
 
@@ -15,6 +15,12 @@
 
          appRouteConfig
             .Get("/about" , req => new HomeController().About());
+
+         appRouteConfig
+            .Get("/add",req => new CakesController().Add());
+
+         appRouteConfig
+            .Post("/add",req => new CakesController().Add(req.FormData["name"],req.FormData["price"]));
       }
    }
 }
