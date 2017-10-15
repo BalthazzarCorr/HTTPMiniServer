@@ -21,6 +21,9 @@
 
          appRouteConfig
             .Post("/add",req => new CakesController().Add(req.FormData["name"],req.FormData["price"]));
+
+         appRouteConfig
+            .Get("/search", req => new CakesController().Search(req.UrlParameters));
       }
    }
 }
