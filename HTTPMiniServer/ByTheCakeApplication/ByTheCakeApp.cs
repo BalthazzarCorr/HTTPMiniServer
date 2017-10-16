@@ -24,6 +24,13 @@
 
          appRouteConfig
             .Get("/search", req => new CakesController().Search(req.UrlParameters));
+
+         appRouteConfig
+            .Get("/calculator",req => new CalculatorController().Add());
+
+         appRouteConfig
+            .Post("/calculator",req => new CalculatorController().ParseInputFromFormData(req.FormData["firstDigit"],req.FormData["operand"],req.FormData["secondDigit"]));
+        
       }
    }
 }
